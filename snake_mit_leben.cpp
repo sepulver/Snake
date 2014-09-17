@@ -4,12 +4,11 @@
 #include<time.h>
 #include<stdbool.h>
 #include<dos.h>
-#include<windows.h>
 
-/*#define KEY_MOVE_UP 119
+#define KEY_MOVE_UP 119
 #define KEY_MOVE_LEFT 97
 #define KEY_MOVE_DOWN 115
-#define KEY_MOVE_RIGHT 100*/
+#define KEY_MOVE_RIGHT 100
 
 char spielfeld[20][20];
 int schlange_x;
@@ -142,65 +141,29 @@ void zeichnen_schlange()
 
 void bewegen_schlange()
 {
-    char input;
+    char dummy = getch();
 
-    bool up = false, down = false, left = false, right = false;
+    loesche_schlange(schlange_x, schlange_y);
 
-    enum key {UP = 119, DOWN = 115, LEFT = 97, RIGHT = 100, ENTER = 13};
+    switch(dummy)
 
-    do
-    {
-        input = getch();
-
-        if(getch())
         {
-            input = getch();
+            case KEY_MOVE_UP:
+                schlange_y--;
+                break;
 
-            switch(input)
-            {
-                case UP:
-                    while(kbhit())
-                    {
-                        up = true, down = false, left = false, right = false;
+            case KEY_MOVE_LEFT:
+                schlange_x--;
+                break;
 
-                        schlange_y--;
-                    }
-                    input = kbhit();
-                    break;
+            case KEY_MOVE_DOWN:
+                schlange_y++;
+                break;
 
-                case DOWN:
-                    while(kbhit())
-                    {
-                        up = false, down = true, left = false, right = false;
-
-                        schlange_y++;
-                    }
-                    input = kbhit();
-                    break;
-
-                case LEFT:
-                    while(kbhit())
-                    {
-                        up = false, down = false, left = true, right = false;
-
-                        schlange_x--;
-                    }
-                    input = kbhit();
-                    break;
-
-                case RIGHT:
-                    while(kbhit())
-                    {
-                        up = false, down = false, left = false, right = true;
-
-                        schlange_x++;
-                    }
-                    input = kbhit();
-                    break;
-            }
+            case KEY_MOVE_RIGHT:
+                schlange_x++;
+                break;
         }
-    }
-    while(input = ENTER);
 }
 
 void loesche_schlange(int x, int y)
@@ -285,7 +248,105 @@ void set_highscore()
         }
 }
 
+
 void bildschirmloeschen()
 {
     system("cls");
 }
+
+
+
+/*int input = getch();
+
+    bool up = false, down = false, left = false, right = false;
+
+    enum key {UP = 72, DOWN = 80, LEFT = 75, RIGHT = 13};
+
+    do
+    {
+
+        if(input == 0)
+        {
+            input = getch();
+
+            switch(input)
+            {
+
+                case UP:
+
+                    while(!kbhit())
+                    {
+                        up = true, down = false, left = false, right = false;
+
+                        schlange_y--;
+
+                        if(schlange_y < 1)
+                        {
+                            randberuehrung();
+                        }
+                    }
+                    input = kbhit();
+                    break;
+
+
+                case DOWN:
+
+                    while(!kbhit())
+                    {
+                        up = false, down = true, left = false, right = false;
+
+                        schlange_y++;
+
+                        if(schlange_y > 18)
+                        {
+                            randberuehrung();
+                        }
+                    }
+                    input = kbhit();
+                    break;
+
+
+                case LEFT:
+
+                    while(!kbhit())
+                    {
+                        up = false, down = false, left = true, right = false;
+
+                        schlange_x--;
+
+                        if(schlange_y < 1)
+                        {
+                            randberuehrung();
+                        }
+                    }
+                    input = kbhit();
+                    break;
+
+
+                case RIGHT:
+
+                    while(!kbhit())
+                    {
+                        up = false, down = false, left = false, right = true;
+
+                        schlange_x++;
+
+                        if(schlange_y > 18)
+                        {
+                            randberuehrung();
+                        }
+                    }
+                    input = kbhit();
+                    break;
+            }
+        }
+         else if (up) goto Up;
+                else if (down) goto Down;
+                    else if (left) goto Left;
+                      else if (right) goto Right;
+    }
+    while(input != ENTER)
+    {
+        randberuehrung();
+    }
+    */

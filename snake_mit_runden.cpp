@@ -12,6 +12,10 @@
 char spielfeld[20][20];
 int schlange_x;
 int schlange_y;
+int score = 0;
+int highscore = 0;
+int runde = 0;
+bool reset;
 
 void init_spielfeld();
 
@@ -23,6 +27,10 @@ void zeichnen_schlange();
 
 void bewegen_schlange();
 
+void loesche_schlange(int x, int y);
+
+void randberuehrung();
+
 void init_schlange(int x, int y);
 
 void zeichnen_spielfeld();
@@ -31,21 +39,27 @@ void bildschirmloeschen();
 
 int main()
 {
-   int fx, fy, x, y, z;
+    int fx, fy, z, eingabe;
+
+    printf("Wie viele Runden?\n\n");
+    scanf("%d", &eingabe);
 
     init_schlange(10, 10);
 
-    for(z = 0; z < 10; z++)
+    for(z = 0; z < eingabe; z++)
     {
-        erzeugen_futterpunkt(fx, fy);
-
-        bool reset = false;
+        reset = false;
 
         bildschirmloeschen();
 
         init_spielfeld();
         definieren_rand();
-        erzeugen_futterpunkt();
+        erzeugen_futterpunkt(fx, fy);
+
+        if(highscore <= score)
+        {
+            highscore = score;
+        }
 
         while(!reset)
         {
@@ -54,14 +68,19 @@ int main()
             bewegen_schlange();
             bildschirmloeschen();
 
-            printf("%d %d", fx, fy);
+            randberuehrung();
 
             if(schlange_x == fx && schlange_y == fy)
             {
                 reset = true;
+
+                score++;
+                runde++;
             }
         }
     }
+    printf("\nHighscore: %d\n", highscore);
+
     return 0;
 }
 
@@ -117,12 +136,14 @@ void init_schlange(int x, int y)
 void zeichnen_schlange()
 {
     spielfeld[schlange_x][schlange_y] = 'S';
-    printf("X: %d    Y: %d\n", schlange_x, schlange_y);
+    printf("X: %d    Y: %d\nScore: %d   Runde: %d\nHighscore: %d\n", schlange_x, schlange_y, score, runde, highscore);
 }
 
 void bewegen_schlange()
 {
     char dummy = getch();
+
+    loesche_schlange(schlange_x, schlange_y);
 
     switch(dummy)
 
@@ -145,6 +166,62 @@ void bewegen_schlange()
         }
 }
 
+void loesche_schlange(int x, int y)
+{
+    spielfeld[x][y] = ' ';
+}
+
+void randberuehrung()
+{
+    if(schlange_y == 0)
+        {
+            init_schlange(10, 10);
+            init_spielfeld();
+            definieren_rand();
+
+            reset = true;
+
+            score = 0;
+            runde++;
+        }
+
+    if(schlange_x== 0)
+        {
+            init_schlange(10, 10);
+            init_spielfeld();
+            definieren_rand();
+
+            reset = true;
+
+            score = 0;
+            runde++;
+        }
+
+    if(schlange_y == 19)
+        {
+            init_schlange(10, 10);
+            init_spielfeld();
+            definieren_rand();
+
+            reset = true;
+
+            score = 0;
+            runde++;
+        }
+
+    if(schlange_x == 19)
+        {
+            init_schlange(10, 10);
+            init_spielfeld();
+            definieren_rand();
+
+            reset = true;
+
+            score = 0;
+            runde++;
+        }
+}
+
 void zeichnen_spielfeld()
 {
     int x, y;
@@ -163,3 +240,4 @@ void bildschirmloeschen()
 {
     system("cls");
 }
+

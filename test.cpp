@@ -12,13 +12,18 @@
 #define KEY_MOVE_RIGHT 100*/
 
 char spielfeld[20][20];
+
 int schlange_x;
 int schlange_y;
 int score = 0;
 int highscore = 0;
 int runde = 0;
 int leben = 3;
+
 bool reset;
+bool up = false, down = false, left = false, right = false;
+
+enum key { UP = 119, DOWN = 115, LEFT = 97, RIGHT = 100 };
 
 void init_spielfeld();
 
@@ -27,6 +32,8 @@ void definieren_rand();
 void erzeugen_futterpunkt(int &x, int &y);
 
 void zeichnen_schlange();
+
+void tastendruck();
 
 void bewegen_schlange();
 
@@ -44,248 +51,261 @@ void bildschirmloeschen();
 
 int main()
 {
-    int fx, fy, eingabe;
+	int fx, fy, eingabe;
 
-    init_schlange(10, 10);
+	init_schlange(10, 10);
 
-    for(runde; runde < 3; runde)
-    {
-        set_highscore();
+	for (runde; runde < 3; runde)
+	{
+		set_highscore();
 
-        reset = false;
+		reset = false;
 
-        bildschirmloeschen();
+		bildschirmloeschen();
 
-        init_spielfeld();
-        definieren_rand();
-        erzeugen_futterpunkt(fx, fy);
+		init_spielfeld();
+		definieren_rand();
+		erzeugen_futterpunkt(fx, fy);
 
-        while(!reset)
-        {
-            zeichnen_schlange();
-            zeichnen_spielfeld();
-            bewegen_schlange();
-            bildschirmloeschen();
+		while (!reset)
+		{
+			zeichnen_schlange();
+			zeichnen_spielfeld();
+			tastendruck();
+			bewegen_schlange();
+			Sleep(200);
 
-            randberuehrung();
+			bildschirmloeschen();
 
-            if(schlange_x == fx && schlange_y == fy)
-            {
-                reset = true;
+			randberuehrung();
 
-                score++;
-            }
-        }
-    }
+			if (schlange_x == fx && schlange_y == fy)
+			{
+				reset = true;
 
-    set_highscore();
+				score++;
+			}
+		}
+	}
 
-    printf("\nHighscore: %d\n", highscore);
+	set_highscore();
 
-    return 0;
+	printf("\nHighscore: %d\n", highscore);
+
+	return 0;
 }
 
 void init_spielfeld()
 {
-    int x, y;
+	int x, y;
 
-    for(x = 0; x < 20; x++)
-    {
-        for(y = 0; y < 20; y++)
-        {
-            spielfeld[x][y] = ' ';
-        }
-    }
+	for (x = 0; x < 20; x++)
+	{
+		for (y = 0; y < 20; y++)
+		{
+			spielfeld[x][y] = ' ';
+		}
+	}
 }
 
 void definieren_rand()
 {
-    int x, y;
+	int x, y;
 
-    for(x = 0; x < 20; x++)
-    {
-        spielfeld[x][0] = 'x';
-        spielfeld[x][19] = 'x';
-    }
+	for (x = 0; x < 20; x++)
+	{
+		spielfeld[x][0] = 'x';
+		spielfeld[x][19] = 'x';
+	}
 
-    for(y = 0; y < 20; y++)
-    {
-        spielfeld[0][y] = 'x';
-        spielfeld[19][y] = 'x';
-    }
+	for (y = 0; y < 20; y++)
+	{
+		spielfeld[0][y] = 'x';
+		spielfeld[19][y] = 'x';
+	}
 }
 
 void erzeugen_futterpunkt(int &x, int &y)
 {
-    srand(time(NULL));
+	srand(time(NULL));
 
-    x = rand() % 17 + 1;
+	x = rand() % 17 + 1;
 
-    y = rand() % 17 + 1;
+	y = rand() % 17 + 1;
 
-    spielfeld[x][y] = 'F';
+	spielfeld[x][y] = 'F';
 
-    return;
+	return;
 }
 
 void init_schlange(int x, int y)
 {
-    schlange_x = x;
-    schlange_y = y;
+	schlange_x = x;
+	schlange_y = y;
 }
 
 void zeichnen_schlange()
 {
-    spielfeld[schlange_x][schlange_y] = 'S';
-    printf("X: %d    Y: %d\nScore: %d   Leben: %d\nHighscore: %d\n", schlange_x, schlange_y, score, leben, highscore);
+	spielfeld[schlange_x][schlange_y] = 'S';
+	printf("X: %d    Y: %d\nScore: %d   Leben: %d\nHighscore: %d\n", schlange_x, schlange_y, score, leben, highscore);
 }
+
+void tastendruck()
+{
+	char input;
+
+	if (kbhit())
+	{
+		input = getch();
+
+		switch (input)
+		{
+		case UP:
+
+			if (down == false)
+			{
+				up = true, down = false, left = false, right = false;
+			}
+
+			break;
+
+		case DOWN:
+
+			if (up == false)
+			{
+				up = false, down = true, left = false, right = false;
+			}
+
+			break;
+
+		case LEFT:
+
+			if (right == false)
+			{
+				up = false, down = false, left = true, right = false;
+			}
+
+			break;
+
+		case RIGHT:
+
+			if (left == false)
+			{
+				up = false, down = false, left = false, right = true;
+			}
+
+			break;
+		}
+	}
+}
+
 
 void bewegen_schlange()
 {
-    char input;
+	if (up == true)
+	{
+		schlange_y--;
+	}
 
-    bool up = false, down = false, left = false, right = false;
+	if (down == true)
+	{
+		schlange_y++;
+	}
 
-    enum key {UP = 119, DOWN = 115, LEFT = 97, RIGHT = 100, ENTER = 13};
+	if (left == true)
+	{
+		schlange_x--;
+	}
 
-    do
-    {
-        input = getch();
-
-        if(getch())
-        {
-            input = getch();
-
-            switch(input)
-            {
-                case UP:
-                    while(kbhit())
-                    {
-                        up = true, down = false, left = false, right = false;
-
-                        schlange_y--;
-                    }
-                    input = kbhit();
-                    break;
-
-                case DOWN:
-                    while(kbhit())
-                    {
-                        up = false, down = true, left = false, right = false;
-
-                        schlange_y++;
-                    }
-                    input = kbhit();
-                    break;
-
-                case LEFT:
-                    while(kbhit())
-                    {
-                        up = false, down = false, left = true, right = false;
-
-                        schlange_x--;
-                    }
-                    input = kbhit();
-                    break;
-
-                case RIGHT:
-                    while(kbhit())
-                    {
-                        up = false, down = false, left = false, right = true;
-
-                        schlange_x++;
-                    }
-                    input = kbhit();
-                    break;
-            }
-        }
-    }
-    while(input = ENTER);
+	if (right == true)
+	{
+		schlange_x++;
+	}
 }
 
 void loesche_schlange(int x, int y)
 {
-    spielfeld[x][y] = ' ';
+	spielfeld[x][y] = ' ';
 }
 
 void randberuehrung()
 {
-    if(schlange_y == 0)
-        {
-            init_schlange(10, 10);
-            init_spielfeld();
-            definieren_rand();
+	if (schlange_y == 0)
+	{
+		init_schlange(10, 10);
+		init_spielfeld();
+		definieren_rand();
 
-            reset = true;
+		reset = true;
 
-            score = 0;
-            leben--;
-            runde++;
-        }
+		score = 0;
+		leben--;
+		runde++;
+	}
 
-    if(schlange_x== 0)
-        {
-            init_schlange(10, 10);
-            init_spielfeld();
-            definieren_rand();
+	if (schlange_x == 0)
+	{
+		init_schlange(10, 10);
+		init_spielfeld();
+		definieren_rand();
 
-            reset = true;
+		reset = true;
 
-            score = 0;
-            leben--;
-            runde++;
-        }
+		score = 0;
+		leben--;
+		runde++;
+	}
 
-    if(schlange_y == 19)
-        {
-            init_schlange(10, 10);
-            init_spielfeld();
-            definieren_rand();
+	if (schlange_y == 19)
+	{
+		init_schlange(10, 10);
+		init_spielfeld();
+		definieren_rand();
 
-            reset = true;
+		reset = true;
 
-            score = 0;
-            leben--;
-            runde++;
-        }
+		score = 0;
+		leben--;
+		runde++;
+	}
 
-    if(schlange_x == 19)
-        {
-            init_schlange(10, 10);
-            init_spielfeld();
-            definieren_rand();
+	if (schlange_x == 19)
+	{
+		init_schlange(10, 10);
+		init_spielfeld();
+		definieren_rand();
 
-            reset = true;
+		reset = true;
 
-            score = 0;
-            leben--;
-            runde++;
-        }
+		score = 0;
+		leben--;
+		runde++;
+	}
 }
 
 void zeichnen_spielfeld()
 {
-    int x, y;
+	int x, y;
 
-    for(y = 0; y < 20; y++)
-    {
-        for(x = 0; x < 20; x++)
-        {
-            printf("%c", spielfeld[x][y]);
-        }
-        printf("\n");
-    }
+	for (y = 0; y < 20; y++)
+	{
+		for (x = 0; x < 20; x++)
+		{
+			printf("%c", spielfeld[x][y]);
+		}
+		printf("\n");
+	}
 }
 
 void set_highscore()
 {
-    if(highscore <= score)
-        {
-            highscore = score;
-        }
+	if (highscore <= score)
+	{
+		highscore = score;
+	}
 }
 
 void bildschirmloeschen()
 {
-    system("cls");
+	system("cls");
 }

@@ -90,7 +90,7 @@ int main()
 
 	set_highscore();
 
-	printf("\nHighscore: %d\n", highscore);
+	printf("\nGame Over \n\nHighscore: %d\n", highscore);
 
 	return 0;
 }

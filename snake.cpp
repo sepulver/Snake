@@ -134,6 +134,8 @@ void erzeugen_futterpunkt(int &x, int &y)
 	y = rand() % 17 + 1;
 
 	spielfeld[x][y] = 'F';
+
+	return;
 }
 
 void init_schlange(int x, int y)
